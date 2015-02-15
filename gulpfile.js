@@ -13,7 +13,6 @@ function readPaths() {
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
 
 gulp.task('js', function() {
-  del(['dist/**/*.js'])
   var stream = gulp.src(paths.js).
     pipe(plugins.concat('application.js'));
 
@@ -25,7 +24,6 @@ gulp.task('js', function() {
 });
 
 gulp.task('css', function() {
-  del(['dist/**/*.css'])
   var stream = gulp.src(paths.css).
     pipe(plugins.sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
     on('error', function(err) { console.error("SCSS compile error:" + err.message); this.emit('end'); }).
@@ -50,6 +48,11 @@ gulp.task('rev', ['js', 'css', 'img'], function() {
     .pipe(gulp.dest('dist'));
 })
 
+gulp.task('clean', function(cb) {
+  del('dist/**/*.*')
+  cb()
+})
+
 gulp.task('html', ['rev'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
@@ -63,7 +66,7 @@ gulp.task('html', ['rev'], function() {
     })).
     pipe(gulp.dest('dist'));
 })
-gulp.task('build', ['html'])
+gulp.task('build', ['clean', 'html'])
 
 if( isDevelopment ) {
   var server = require('gulp-express'),
@@ -94,8 +97,8 @@ if( isDevelopment ) {
 
     // (Re)sets watchers
     function setWatchers() {
-      gulp.watch(paths.js, ['js', browserSync.reload])
-      gulp.watch(paths.css, ['css']) // browserSync automatically reloads
+      gulp.watch(paths.js, ['html', browserSync.reload])
+      gulp.watch(paths.css, ['html']) // browserSync automatically reloads
       gulp.watch(paths.html, ['html', browserSync.reload])
       gulp.watch(paths.img, ['img', browserSync.reload])
     }
