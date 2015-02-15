@@ -1,10 +1,6 @@
 var gulp = require('gulp'),
-    concat = require('gulp-concat'),
-    sass = require('gulp-sass'),
+    plugins = require('gulp-load-plugins')(),
     fs = require('fs'),
-    uglify = require('gulp-uglify'),
-    rev = require('gulp-rev'),
-    htmlreplace = require('gulp-html-replace'),
     del = require('del'),
     paths;
 
@@ -19,10 +15,10 @@ var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'developmen
 gulp.task('js', function() {
   del(['dist/**/*.js'])
   var stream = gulp.src(paths.js).
-    pipe(concat('application.js'));
+    pipe(plugins.concat('application.js'));
 
   if( !isDevelopment ) {
-    stream = stream.pipe(uglify())
+    stream = stream.pipe(plugins.uglify())
   }
 
   return stream.pipe(gulp.dest('dist/'));
@@ -31,9 +27,9 @@ gulp.task('js', function() {
 gulp.task('css', function() {
   del(['dist/**/*.css'])
   var stream = gulp.src(paths.css).
-    pipe(sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
+    pipe(plugins.sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
     on('error', function(err) { console.error("SCSS compile error:" + err.message); this.emit('end'); }).
-    pipe(concat('application.css')).
+    pipe(plugins.concat('application.css')).
     pipe(gulp.dest('dist/'));
 
   return isDevelopment ?
@@ -48,9 +44,9 @@ gulp.task('img', function() {
 
 gulp.task('rev', ['js', 'css', 'img'], function() {
   return gulp.src(['dist/**/*.css', 'dist/**/*.js'])
-    .pipe(rev())
+    .pipe(plugins.rev())
     .pipe(gulp.dest('dist'))
-    .pipe(rev.manifest())
+    .pipe(plugins.rev.manifest())
     .pipe(gulp.dest('dist'));
 })
 
@@ -58,7 +54,7 @@ gulp.task('html', ['rev'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
   return gulp.src(paths.html, {base: 'app/'}).
-    pipe(htmlreplace({
+    pipe(plugins.htmlReplace({
       css: manifest['application.css'],
       js: {
         src: manifest['application.js'],
