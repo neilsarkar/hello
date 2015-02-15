@@ -1,1 +1,2 @@
-angular.module('app', ['ngRoute'])
+angular.module('recs', [])
+angular.module('app', ['ui.router', 'recs'])

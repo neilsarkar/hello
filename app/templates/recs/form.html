@@ -1,0 +1,19 @@
+<form ng-submit="save()">
+  <label>
+    Name:
+    <input placeholder="Name" ng-model="rec.name"/>
+  </label>
+  <label>
+    Age:
+    <input placeholder="Age" ng-model="rec.age" type="tel"/>
+  </label>
+  <label>
+    About:
+    <textarea placeholder="About" ng-model="rec.about"></textarea>
+  </label>
+  <label>
+    Publish
+    <input type="checkbox" ng-model="rec.published" />
+  </label>
+  <input type="submit" value="Save" />
+</form>
