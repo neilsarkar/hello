@@ -5,17 +5,11 @@ var gulp = require('gulp'),
     isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development',
     paths = readPaths();
 
-// build: clean and regenerate dist folder
-gulp.task('build', ['clean', 'html'])
+// build: regenerate dist folder
+gulp.task('build', ['html'])
 
-// clean: clean dist folder
-gulp.task('clean', function(cb) {
-  del('dist/**/*.*')
-  cb()
-})
-
-// html: regenerate assets and wire them up to html
-gulp.task('html', ['rev'], function() {
+// html: clean assets folder, regenerate assets and wire them up to html
+gulp.task('html', ['clean', 'rev'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
   return gulp.src(paths.html, {base: 'app/'}).
@@ -27,6 +21,12 @@ gulp.task('html', ['rev'], function() {
       }
     })).
     pipe(gulp.dest('dist'));
+})
+
+// clean: clean dist folder
+gulp.task('clean', function(cb) {
+  del('dist/**/*.*')
+  cb()
 })
 
 // rev: fingerprint generated assets
