@@ -5,8 +5,8 @@ You love it.
 
 Sawdust:
 
-* fingerprinted assets in prod
-* reload properly when manifest changes
+* reload properly when assets.json changes
 * use gulp-load-plugins
 * sourcemaps
 * wiredeps
+* clean synchronously before running shit

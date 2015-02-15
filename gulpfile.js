@@ -3,17 +3,21 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     fs = require('fs'),
     uglify = require('gulp-uglify'),
+    rev = require('gulp-rev'),
+    htmlreplace = require('gulp-html-replace'),
+    del = require('del'),
     paths;
 
 // read paths on load
 readPaths()
 function readPaths() {
-  return paths = JSON.parse(fs.readFileSync('./manifest.json', 'utf8'))
+  return paths = JSON.parse(fs.readFileSync('./assets.json', 'utf8'))
 }
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
 
 gulp.task('js', function() {
+  del(['dist/**/*.js'])
   var stream = gulp.src(paths.js).
     pipe(concat('application.js'));
 
@@ -25,6 +29,7 @@ gulp.task('js', function() {
 });
 
 gulp.task('css', function() {
+  del(['dist/**/*.css'])
   var stream = gulp.src(paths.css).
     pipe(sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
     on('error', function(err) { console.error("SCSS compile error:" + err.message); this.emit('end'); }).
@@ -41,14 +46,30 @@ gulp.task('img', function() {
     pipe(gulp.dest('dist/images/'));
 })
 
-gulp.task('html', function() {
-  return gulp.src(paths.html, {base: 'app/'}).
-    pipe(gulp.dest('dist'));
+gulp.task('rev', ['js', 'css', 'img'], function() {
+  return gulp.src(['dist/**/*.css', 'dist/**/*.js'])
+    .pipe(rev())
+    .pipe(gulp.dest('dist'))
+    .pipe(rev.manifest())
+    .pipe(gulp.dest('dist'));
 })
 
-gulp.task('build', ['js', 'img', 'css', 'html'])
+gulp.task('html', ['rev'], function() {
+  var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
-if( !process.env.NODE_ENV || process.env.NODE_ENV == 'development' ) {
+  return gulp.src(paths.html, {base: 'app/'}).
+    pipe(htmlreplace({
+      css: manifest['application.css'],
+      js: {
+        src: manifest['application.js'],
+        tpl: '<script src="%s" async="async"></script>'
+      }
+    })).
+    pipe(gulp.dest('dist'));
+})
+gulp.task('build', ['html'])
+
+if( isDevelopment ) {
   var server = require('gulp-express'),
       browserSync = require('browser-sync');
 
@@ -62,8 +83,8 @@ if( !process.env.NODE_ENV || process.env.NODE_ENV == 'development' ) {
       process.exit(0)
     })
 
-    // Reset paths and watchers when manifest.json is changed
-    gulp.watch('manifest.json', function() {
+    // Reset paths and watchers when assets.json is changed
+    gulp.watch('assets.json', function() {
       readPaths()
       setWatchers()
       gulp.run('build')
