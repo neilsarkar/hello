@@ -1,19 +1,23 @@
-<form ng-submit="save()">
-  <label>
-    Name
-    <input type="text" placeholder="Name" ng-model="rec.name"/>
-  </label>
-  <label>
-    Age
-    <input type="text" placeholder="Age" ng-model="rec.age" type="tel"/>
-  </label>
-  <label>
-    About
-    <textarea placeholder="About" ng-model="rec.about"></textarea>
-  </label>
-  <label>
-    Publish
-    <input type="checkbox" ng-model="rec.published" />
-  </label>
-  <input type="submit" value="Save" />
-</form>
+<div class="row">
+  <div class="col-sm-6">
+    <form ng-submit="save()">
+      <label>
+        Name
+        <input type="text" class="form-control" placeholder="Name" ng-model="rec.name"/>
+      </label>
+      <label>
+        Age
+        <input type="text" class="form-control" placeholder="Age" ng-model="rec.age" type="tel"/>
+      </label>
+      <label>
+        About
+        <textarea class="form-control" placeholder="About" ng-model="rec.about"></textarea>
+      </label>
+      <label>
+        Publish
+        <input type="checkbox" ng-model="rec.published" />
+      </label>
+      <input type="submit" value="Save" class="btn btn-default"/>
+    </form>
+  </div>
+</div>
