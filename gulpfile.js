@@ -2,57 +2,19 @@ var gulp = require('gulp'),
     plugins = require('gulp-load-plugins')(),
     fs = require('fs'),
     del = require('del'),
-    paths;
+    isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development',
+    paths = readPaths();
 
-// read paths on load
-readPaths()
-function readPaths() {
-  return paths = JSON.parse(fs.readFileSync('./assets.json', 'utf8'))
-}
+// clean and regenerate dist folder
+gulp.task('build', ['clean', 'html'])
 
-var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
-
-gulp.task('js', function() {
-  var stream = gulp.src(paths.js).
-    pipe(plugins.concat('application.js'));
-
-  if( !isDevelopment ) {
-    stream = stream.pipe(plugins.uglify())
-  }
-
-  return stream.pipe(gulp.dest('dist/'));
-});
-
-gulp.task('css', function() {
-  var stream = gulp.src(paths.css).
-    pipe(plugins.sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
-    on('error', function(err) { console.error("SCSS compile error:" + err.message); this.emit('end'); }).
-    pipe(plugins.concat('application.css')).
-    pipe(gulp.dest('dist/'));
-
-  return isDevelopment ?
-    stream.pipe(browserSync.reload({stream: true})) :
-    stream;
-})
-
-gulp.task('img', function() {
-  return gulp.src(paths.img, {base: 'app/img/'}).
-    pipe(gulp.dest('dist/images/'));
-})
-
-gulp.task('rev', ['js', 'css', 'img'], function() {
-  return gulp.src(['dist/**/*.css', 'dist/**/*.js'])
-    .pipe(plugins.rev())
-    .pipe(gulp.dest('dist'))
-    .pipe(plugins.rev.manifest())
-    .pipe(gulp.dest('dist'));
-})
-
+// clean dist folder
 gulp.task('clean', function(cb) {
   del('dist/**/*.*')
   cb()
 })
 
+// regenerate assets and wire them up to html
 gulp.task('html', ['rev'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
@@ -66,8 +28,48 @@ gulp.task('html', ['rev'], function() {
     })).
     pipe(gulp.dest('dist'));
 })
-gulp.task('build', ['clean', 'html'])
 
+// fingerprint generated assets
+gulp.task('rev', ['js', 'css', 'img'], function() {
+  return gulp.src(['dist/**/*.css', 'dist/**/*.js'])
+    .pipe(plugins.rev())
+    .pipe(gulp.dest('dist'))
+    .pipe(plugins.rev.manifest())
+    .pipe(gulp.dest('dist'));
+})
+
+// generate optionally minified application.js from js
+gulp.task('js', function() {
+  var stream = gulp.src(paths.js).
+    pipe(plugins.concat('application.js'));
+
+  if( !isDevelopment ) {
+    stream = stream.pipe(plugins.uglify())
+  }
+
+  return stream.pipe(gulp.dest('dist/'));
+});
+
+// generate optionally minified application.css from scss
+gulp.task('css', function() {
+  var stream = gulp.src(paths.css).
+    pipe(plugins.sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
+    on('error', function(err) { console.error("SCSS compile error:" + err.message); this.emit('end'); }).
+    pipe(plugins.concat('application.css')).
+    pipe(gulp.dest('dist/'));
+
+  return isDevelopment ?
+    stream.pipe(browserSync.reload({stream: true})) :
+    stream;
+})
+
+// generate images folder
+gulp.task('img', function() {
+  return gulp.src(paths.img, {base: 'app/img/'}).
+    pipe(gulp.dest('dist/images/'));
+})
+
+// in development, watch files for changes and reload server+browser automatically
 if( isDevelopment ) {
   var server = require('gulp-express'),
       browserSync = require('browser-sync');
@@ -117,4 +119,8 @@ if( isDevelopment ) {
     gulp.watch(['index.js'], [server.run])
   })
   gulp.task('default', ['build', 'server', 'watch'])
+}
+
+function readPaths() {
+  return paths = JSON.parse(fs.readFileSync('./assets.json', 'utf8'))
 }
