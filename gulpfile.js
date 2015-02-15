@@ -5,16 +5,16 @@ var gulp = require('gulp'),
     isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development',
     paths = readPaths();
 
-// clean and regenerate dist folder
+// build: clean and regenerate dist folder
 gulp.task('build', ['clean', 'html'])
 
-// clean dist folder
+// clean: clean dist folder
 gulp.task('clean', function(cb) {
   del('dist/**/*.*')
   cb()
 })
 
-// regenerate assets and wire them up to html
+// html: regenerate assets and wire them up to html
 gulp.task('html', ['rev'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
@@ -29,7 +29,7 @@ gulp.task('html', ['rev'], function() {
     pipe(gulp.dest('dist'));
 })
 
-// fingerprint generated assets
+// rev: fingerprint generated assets
 gulp.task('rev', ['js', 'css', 'img'], function() {
   return gulp.src(['dist/**/*.css', 'dist/**/*.js'])
     .pipe(plugins.rev())
@@ -38,7 +38,7 @@ gulp.task('rev', ['js', 'css', 'img'], function() {
     .pipe(gulp.dest('dist'));
 })
 
-// generate optionally minified application.js from js
+// js: generate optionally minified application.js from js
 gulp.task('js', function() {
   var stream = gulp.src(paths.js).
     pipe(plugins.concat('application.js'));
@@ -50,7 +50,7 @@ gulp.task('js', function() {
   return stream.pipe(gulp.dest('dist/'));
 });
 
-// generate optionally minified application.css from scss
+// css: generate optionally minified application.css from scss
 gulp.task('css', function() {
   var stream = gulp.src(paths.css).
     pipe(plugins.sass({outputStyle: isDevelopment ? 'nested' : 'compressed'})).
@@ -63,7 +63,7 @@ gulp.task('css', function() {
     stream;
 })
 
-// generate images folder
+// img: generate images folder
 gulp.task('img', function() {
   return gulp.src(paths.img, {base: 'app/img/'}).
     pipe(gulp.dest('dist/images/'));
@@ -74,7 +74,7 @@ if( isDevelopment ) {
   var server = require('gulp-express'),
       browserSync = require('browser-sync');
 
-  // Watches asset paths and reloads browser on changes
+  // watch: Watches asset paths and reloads browser on changes
   gulp.task('watch', function() {
     setWatchers()
 
@@ -91,6 +91,7 @@ if( isDevelopment ) {
       gulp.run('build')
     })
 
+    // Trigger manual rebuild when user hits enter
     process.stdin.on('data', function(line) {
       if( line.toString() === "\n" ) {
         gulp.run('build')
@@ -106,6 +107,7 @@ if( isDevelopment ) {
     }
   })
 
+  // Start streaming server and browsersync
   gulp.task('server', function() {
     server.run({
       file: 'index.js'
