@@ -71,8 +71,7 @@ gulp.task('img', function() {
 
 // in development, watch files for changes and reload server+browser automatically
 if( isDevelopment ) {
-  var server = plugins.express,
-      browserSync = require('browser-sync');
+  var browserSync = require('browser-sync');
 
   // watch: Watches asset paths and reloads browser on changes
   gulp.task('watch', function() {
@@ -109,16 +108,12 @@ if( isDevelopment ) {
 
   // Start streaming server and browsersync
   gulp.task('server', function() {
-    server.run({
-      file: 'index.js'
-    })
+    plugins.nodemon({ script: 'index.js'})
 
     browserSync({
       proxy: 'localhost:3000',
       port: 5000
     })
-
-    gulp.watch(['index.js'], [server.run])
   })
   gulp.task('default', ['build', 'server', 'watch'])
 }
