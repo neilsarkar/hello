@@ -109,7 +109,7 @@ if( isDevelopment ) {
   // Start streaming server and browsersync
   gulp.task('server', function() {
     var started = false;
-    plugins.nodemon({ script: 'index.js', watch: ['index.js']})
+    plugins.nodemon({ script: 'index.js', watch: ['index.js', 'server/*.js']})
       .on('start', function() {
         if( !started ) {
           started = true
