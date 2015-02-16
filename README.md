@@ -5,7 +5,7 @@ You love it.
 
 Sawdust:
 
-* reload server properly when there are changes
+* reload browser automatically when there are server changes
 * reload properly when assets.json changes
 * sourcemaps
 * wiredep to automatically add bower dependencies
