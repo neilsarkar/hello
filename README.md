@@ -7,3 +7,4 @@ Sawdust:
 
 * use transformResponse
 * set api base url using a constant
+* sprites https://github.com/aslansky/css-sprite

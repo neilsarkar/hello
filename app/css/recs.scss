@@ -1,6 +1,9 @@
-label {
-  display: block;
-  input[type=text], textarea {
+.m-recs {
+  label {
     display: block;
+    font-weight: normal;
+    input[type=text], textarea {
+      display: block;
+    }
   }
 }

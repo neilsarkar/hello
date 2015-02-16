@@ -8,6 +8,9 @@ app.use(express.static(__dirname + '/public'))
 router.get('/', function(req, res) {
   res.json({ message: 'Hey'});
 })
+router.post('/recs', function(req, res) {
+  res.status(204).end()
+})
 app.use('/api', router)
 
 var server = app.listen(process.env.PORT || 3000, function () {

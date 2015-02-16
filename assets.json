@@ -4,6 +4,7 @@
     "bower_components/underscore/underscore.js",
     "bower_components/angular-ui-router/release/angular-ui-router.js",
     "app/js/modules.js",
+    "app/js/constants.js",
     "app/js/**/*.js"
   ],
   "css": [

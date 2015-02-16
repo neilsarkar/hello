@@ -1,13 +1,12 @@
 angular.module('recs').service('$adRec', [
   '$http',
   function($http) {
-    var self = this,
-        API_BASE_URL = '/api';
+    var self = this;
 
     self.create = function(rec) {
       return $http({
         method: 'POST',
-        url: API_BASE_URL + '/recs',
+        url: Const.API_BASE_URL + '/recs',
         data: rec
       }).then(function(response) {
         return response.data

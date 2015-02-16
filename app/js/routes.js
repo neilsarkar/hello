@@ -21,7 +21,7 @@ angular.module('app').config([
         authReq: true
       }).
       state('admin.recs.new', {
-        url: 'recs/new',
+        url: '/new',
         templateUrl: 'templates/recs/form.html',
         controller: 'NewRecControl',
         authReq: true
