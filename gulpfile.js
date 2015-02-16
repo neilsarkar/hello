@@ -71,7 +71,7 @@ gulp.task('img', function() {
 
 // in development, watch files for changes and reload server+browser automatically
 if( isDevelopment ) {
-  var server = require('gulp-express'),
+  var server = plugins.express,
       browserSync = require('browser-sync');
 
   // watch: Watches asset paths and reloads browser on changes
