@@ -1,1 +1,5 @@
-<a ui-sref="admin.recs.new">Create New Recommendation</a>
+<a ui-sref="admin.recs.new">+ Create New Recommendation</a>
+
+<div ng-repeat="rec in recs">
+  <a ui-sref="admin.recs.edit({uuid: rec.uuid})">{{::rec.name}}</a>
+</div>

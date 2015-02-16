@@ -1,11 +1,12 @@
 angular.module('recs').controller('NewRecControl', [
-  '$scope', '$adRec',
-  function($scope, $adRec) {
+  '$scope', '$adRec', '$state',
+  function($scope, $adRec, $state) {
     $scope.rec = {}
 
     $scope.save = function() {
       $adRec.create($scope.rec).then(function yes() {
-        console.log("Did it")
+        $state.go('admin.recs.list')
+        alert('Created.')
       }, function no(xhr) {
         console.error("Nope.")
       })

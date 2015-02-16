@@ -25,6 +25,12 @@ angular.module('app').config([
         templateUrl: 'templates/recs/form.html',
         controller: 'NewRecControl',
         authReq: true
+      }).
+      state('admin.recs.edit', {
+        url: '/:uuid',
+        templateUrl: 'templates/recs/form.html',
+        controller: 'EditRecControl',
+        authReq: true
       })
   }
 ])

@@ -17,7 +17,8 @@
         Publish
         <input type="checkbox" ng-model="rec.published" />
       </label>
-      <input type="submit" value="Save" class="btn btn-default"/>
+      <input type="submit" value="Save" class="btn btn-success"/>
+      <a class="btn btn-default" ng-click="delete()" ng-if="::rec.uuid">Delete</a>
     </form>
   </div>
 </div>
