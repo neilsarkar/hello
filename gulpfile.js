@@ -108,19 +108,22 @@ if( isDevelopment ) {
 
   // Start streaming server and browsersync
   gulp.task('server', function() {
+    var started = false;
     plugins.nodemon({ script: 'index.js', watch: ['index.js']})
       .on('start', function() {
-        browserSync({
-          proxy: 'localhost:3000',
-          port: 5000
-        })
+        if( !started ) {
+          started = true
+          browserSync({
+            proxy: 'localhost:3000',
+            port: 5000
+          })
+        }
       })
       .on('restart', function() {
         setTimeout(function() {
           browserSync.reload({stream: false})
         }, 500)
       })
-
   })
   gulp.task('default', ['build', 'server', 'watch'])
 }
