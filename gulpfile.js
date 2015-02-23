@@ -9,7 +9,7 @@ var gulp = require('gulp'),
 gulp.task('build', ['html'])
 
 // html: clean assets folder, regenerate assets and wire them up to html
-gulp.task('html', ['clean', 'rev'], function() {
+gulp.task('html', ['clean', 'rev', 'fonts'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
   return gulp.src(paths.html, {base: 'app/'}).
@@ -36,6 +36,12 @@ gulp.task('rev', ['js', 'css', 'img'], function() {
     .pipe(gulp.dest('dist'))
     .pipe(plugins.rev.manifest())
     .pipe(gulp.dest('dist'));
+})
+
+// fonts: make vendor fonts accessible at /fonts
+gulp.task('fonts', function() {
+  return gulp.src(['bower_components/fontawesome/fonts/*', 'bower_components/bootstrap/fonts/*'])
+    .pipe(gulp.dest('dist/fonts'))
 })
 
 // js: generate optionally minified application.js from js
