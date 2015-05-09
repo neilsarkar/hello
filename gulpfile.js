@@ -6,10 +6,12 @@ var gulp = require('gulp'),
     paths = readPaths();
 
 // build: regenerate dist folder
-gulp.task('build', ['html'])
+gulp.task('build', ['clean'], function() {
+  gulp.start('html');
+})
 
 // html: clean assets folder, regenerate assets and wire them up to html
-gulp.task('html', ['clean', 'rev', 'fonts'], function() {
+gulp.task('html', ['rev', 'fonts', 'img'], function() {
   var manifest = JSON.parse(fs.readFileSync('dist/rev-manifest.json', 'utf8'));
 
   return gulp.src(paths.html, {base: 'app/'}).
@@ -25,12 +27,11 @@ gulp.task('html', ['clean', 'rev', 'fonts'], function() {
 
 // clean: clean dist folder
 gulp.task('clean', function(cb) {
-  del('dist/**/*.*')
-  cb()
+  del('dist/**/*.*', cb);
 })
 
 // rev: fingerprint generated assets
-gulp.task('rev', ['js', 'css', 'img'], function() {
+gulp.task('rev', ['js', 'css'], function() {
   return gulp.src(['dist/**/*.css', 'dist/**/*.js'])
     .pipe(plugins.rev())
     .pipe(gulp.dest('dist'))
@@ -93,13 +94,13 @@ if( isDevelopment ) {
     gulp.watch('assets.json', function() {
       readPaths()
       setWatchers()
-      gulp.run('build')
+      gulp.start('build')
     })
 
     // Trigger manual rebuild when user hits enter
     process.stdin.on('data', function(line) {
       if( line.toString() === "\n" ) {
-        gulp.run('build')
+        gulp.start('build')
       }
     })
 
