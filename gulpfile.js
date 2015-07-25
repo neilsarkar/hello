@@ -86,8 +86,7 @@ if( isDevelopment ) {
 
     // Restart process when gulpfile is changed
     gulp.watch('gulpfile.js', function() {
-      console.log("Gulpfile changed, you should restart")
-      process.exit(0)
+      console.warn("Warning: gulpfile changed")
     })
 
     // Reset paths and watchers when assets.json is changed
@@ -106,9 +105,9 @@ if( isDevelopment ) {
 
     // (Re)sets watchers
     function setWatchers() {
-      gulp.watch(paths.js, ['html', browserSync.reload])
-      gulp.watch(paths.css, ['html']) // browserSync automatically reloads
-      gulp.watch(paths.html, ['html', browserSync.reload])
+      gulp.watch(paths.js, ['build', browserSync.reload])
+      gulp.watch(paths.css, ['build']) // browserSync automatically reloads
+      gulp.watch(paths.html, ['build', browserSync.reload])
       gulp.watch(paths.img, ['img', browserSync.reload])
     }
   })
